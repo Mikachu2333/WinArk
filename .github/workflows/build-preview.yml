@@ -62,5 +62,4 @@ jobs:
         
     - name: Compile WinArk
       run: |
-        cd WinArk
         msbuild ./WinArk.sln /p:Configuration=Release /p:Platform=x64
