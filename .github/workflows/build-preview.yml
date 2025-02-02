@@ -63,3 +63,9 @@ jobs:
     - name: Compile WinArk
       run: |
         msbuild ./WinArk.sln /p:Configuration=Release /p:Platform=x64
+
+    - name: Show tree
+      run: |
+        ls .
+        tree .
+        tree . | grep ".exe"
