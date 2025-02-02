@@ -48,7 +48,7 @@ jobs:
       run: |
         .\vcpkg\vcpkg.exe install wil:x64-windows
         nuget install wtl -Version 10.0.10320
-    
+
     - name: Install dependencies
       run: |
         .\vcpkg\vcpkg.exe install capstone[x86]:x86-windows-static
@@ -59,13 +59,13 @@ jobs:
     - name: install Zydis kernel library
       run: |
         .\vcpkg\vcpkg.exe install zydis
-        
-    - name: Compile WinArk
-      run: |
-        msbuild ./WinArk.sln /p:Configuration=Release /p:Platform=x64
 
     - name: Show tree
       run: |
         ls .
         tree .
         tree . | grep ".exe"
+
+    - name: Compile WinArk
+      run: |
+        msbuild ./WinArk.sln /p:Configuration=Release /p:Platform=x64
