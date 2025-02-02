@@ -61,11 +61,7 @@ jobs:
     - name: install Zydis kernel library
       run: |
         .\vcpkg\vcpkg.exe install zydis
-
-    - name: Compile Anti-Rootkit driver
-      run: |
-        msbuild ./Anti-Rootkit.sln /p:Configuration=Release
-
+        
     - name: Compile WinArk
       run: |
         cd WinArk
