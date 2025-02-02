@@ -15,10 +15,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4.2.2
 
     - name: Set up Visual Studio
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v2
+      with:
+        msbuild-architecture: x64
 
     - name: Install vcpkg
       run: |
@@ -34,9 +36,8 @@ jobs:
 
     - name: Compile Zydis kernel library
       run: |
-        cd path/to/Zydis
-        msbuild Zydis.sln /p:Configuration=Release /p:Platform=Win32
-        msbuild Zydis.sln /p:Configuration=Release /p:Platform=x64
+        msbuild ./Anti-Rootkit.sln /p:Configuration=Release /p:Platform=Win32
+        msbuild ./Anti-Rootkit.sln /p:Configuration=Release /p:Platform=x64
 
     - name: Compile Anti-Rootkit driver
       run: |
