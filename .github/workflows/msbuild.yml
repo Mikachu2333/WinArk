@@ -1,36 +1,47 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+name: Build WinArk
 
-name: MSBuild
-
-on: []
-
-env:
-  # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: .
-
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  BUILD_CONFIGURATION: Release
-
-permissions:
-  contents: read
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  build_driver:
-    name: build AntiRootkit.sys
-    runs-on: windows-2022
+  build:
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v2
-      with: { submodules: recursive}
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1.3
-      with: {vs-version: '[16.11,]'}
 
-    - name: Build kernel-mode
-      run: msbuild.exe Anti-Rootkit.sln -target:Anti-Rootkit:Rebuild '/p:Configuration="Release";Platform=X64'
+    - name: Set up Visual Studio
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+
+    - name: Install dependencies
+      run: |
+        .\vcpkg\vcpkg.exe install capstone[x86]:x86-windows-static
+        .\vcpkg\vcpkg.exe install capstone[x86]:x64-windows-static
+        .\vcpkg\vcpkg.exe install curlcpp:x86-windows-static
+        .\vcpkg\vcpkg.exe install curlcpp:x64-windows-static
+
+    - name: Compile Zydis kernel library
+      run: |
+        cd path/to/Zydis
+        msbuild Zydis.sln /p:Configuration=Release /p:Platform=Win32
+        msbuild Zydis.sln /p:Configuration=Release /p:Platform=x64
+
+    - name: Compile Anti-Rootkit driver
+      run: |
+        msbuild path/to/Anti-Rootkit.sln /p:Configuration=Release
+
+    - name: Compile WinArk
+      run: |
+        msbuild path/to/WinArk.sln /p:Configuration=Release
