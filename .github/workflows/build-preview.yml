@@ -3,10 +3,27 @@ name: Build WinArk
 on:
   push:
     branches:
-      - main
+      - master
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - "**.md"
+      - "**.png"
+      - "License"
+      - "/doc/**"
   pull_request:
     branches:
-      - main
+      - master
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - "**.md"
+      - "**.png"
+      - "License"
+      - "/doc/**"
+    types:
+      - opened
+      - synchronize
   workflow_dispatch:
 
 jobs:
