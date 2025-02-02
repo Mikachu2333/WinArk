@@ -5,7 +5,6 @@ on:
     branches:
       - master
     paths-ignore:
-      - ".github/**"
       - ".gitignore"
       - "**.md"
       - "**.png"
@@ -15,7 +14,6 @@ on:
     branches:
       - master
     paths-ignore:
-      - ".github/**"
       - ".gitignore"
       - "**.md"
       - "**.png"
@@ -39,11 +37,20 @@ jobs:
       with:
         msbuild-architecture: x64
 
+    - name: Install WDK
+      run: |
+        nuget install Microsoft.Windows.DriverKit -Version 10.0.22000.1
+
     - name: Install vcpkg
       run: |
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
 
+    - name: Install WTL and WIL
+      run: |
+        .\vcpkg\vcpkg.exe install wil:x64-windows
+        nuget install wtl -Version 10.0.10320
+    
     - name: Install dependencies
       run: |
         .\vcpkg\vcpkg.exe install capstone[x86]:x86-windows-static
@@ -51,15 +58,15 @@ jobs:
         .\vcpkg\vcpkg.exe install curlcpp:x86-windows-static
         .\vcpkg\vcpkg.exe install curlcpp:x64-windows-static
 
-    - name: Compile Zydis kernel library
+    - name: install Zydis kernel library
       run: |
-        msbuild ./Anti-Rootkit.sln /p:Configuration=Release /p:Platform=Win32
-        msbuild ./Anti-Rootkit.sln /p:Configuration=Release /p:Platform=x64
+        .\vcpkg\vcpkg.exe install zydis
 
     - name: Compile Anti-Rootkit driver
       run: |
-        msbuild path/to/Anti-Rootkit.sln /p:Configuration=Release
+        msbuild ./Anti-Rootkit.sln /p:Configuration=Release
 
     - name: Compile WinArk
       run: |
-        msbuild path/to/WinArk.sln /p:Configuration=Release
+        cd WinArk
+        msbuild ./WinArk.sln /p:Configuration=Release /p:Platform=x64
